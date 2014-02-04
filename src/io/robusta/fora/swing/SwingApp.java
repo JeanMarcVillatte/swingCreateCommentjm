@@ -43,10 +43,12 @@ public class SwingApp {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		Comment model = ForaDataSource.getInstance().getComments().get(1);
-		
+
+		//Boilerplate
+		Comment model = ForaDataSource.getInstance().getComments().get(0);
 		CommentView commentView = new CommentView(model);
-		CommentController controller=new CommentController(model,commentView);
+		CommentController controller = new CommentController(model, commentView);
+
 		commentView.setController(controller);
 		
 		frame.getContentPane().add(commentView, BorderLayout.CENTER);

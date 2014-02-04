@@ -1,6 +1,10 @@
 package io.robusta.fora.swing;
 
-import io.robusta.fora.domain.Comment;
+
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -9,32 +13,47 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
+import io.robusta.fora.ForaDataSource;
+import io.robusta.fora.domain.Comment;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.UIManager;
+
 public class CommentView extends JPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static Comment model = new Comment();
-	private CommentController controller;
+
+	/**
+	 * @wbp.nonvisual location=130,379
+	 */
+	Comment model;
+	CommentController controller;
+
+	public CommentView() {
+		this.model = ForaDataSource.getInstance().getComments().get(1);
+		initView();
+	}
+	
+	public CommentView(Comment comment) {
+		this.model = comment;
+		initView();
+	}
+	
+	JTextPane commentPane;
 	/**
 	 * Create the panel.
 	 */
-	
-	public CommentView(Comment model){
-		super();
-		this.model=model;
-		initView();
-		
-	}
-	public void setController(CommentController controller) {
-		this.controller = controller;
-	}
 	public void initView() {
 		
-		JTextPane CommentPane = new JTextPane();
-		CommentPane.setText(model.getContent());
-		add(CommentPane);
+		commentPane = new JTextPane();
+		commentPane.setBackground(UIManager.getColor("Label.background"));
+		commentPane.setEditable(false);
+		commentPane.setText(model.getContent());
+		add(commentPane);
+
 		
 		JLabel lblUser = new JLabel(String.valueOf(model.getUser()));
 		lblUser.setVerticalAlignment(SwingConstants.TOP);
@@ -42,10 +61,22 @@ public class CommentView extends JPanel {
 		add(lblUser);
 		
 		JButton buttonLike = new JButton("");
+		buttonLike.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.like();
+				updateContentColor();
+			}
+		});
 		buttonLike.setIcon(new ImageIcon(CommentView.class.getResource("/io/robusta/fora/swing/images/like.png")));
 		add(buttonLike);
 		
 		JButton buttonDislike = new JButton("");
+		buttonDislike.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.dislike();
+				updateContentColor();
+			}
+		});
 		buttonDislike.setIcon(new ImageIcon(CommentView.class.getResource("/io/robusta/fora/swing/images/dislike.png")));
 		add(buttonDislike);
 		
@@ -54,11 +85,18 @@ public class CommentView extends JPanel {
 		add(buttonFlag);
 
 	}
-	public static void setModel(Comment model) {
-		CommentView.model = model;
-	}
-	public static Comment getModel() {
-		return model;
-	}
 
+	public void setController(CommentController controller) {
+		this.controller = controller;
+	}
+	
+	private void updateContentColor(){
+		if (this.model.getScore() >0){
+			commentPane.setForeground(Color.GREEN);
+		}else if (this.model.getScore()<0){
+			commentPane.setForeground(Color.RED);
+		}else{
+			commentPane.setForeground(Color.BLACK);
+		}
+	}
 }
