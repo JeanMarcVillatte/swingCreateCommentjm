@@ -40,19 +40,43 @@ public class SwingApp {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 700, 400);
+		frame.setBounds(100, 100, 700, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 
-
-		Subject model = ForaDataSource.getInstance().getSubjects().get(0);
-		SubjectView subjectView = new SubjectView(model);
-
-		SubjectController controller = new SubjectController(model, subjectView);
-
-		subjectView.setController(controller);
+		/*
+		//Boilerplate for CommentView
+		Comment model = ForaDataSource.getInstance().getComments().get(0);
+		CommentView commentView = new CommentView(model);
+		CommentController controller = new CommentController(model, commentView);
+		commentView.setController(controller);		
+		//frame.getContentPane().add(commentView, BorderLayout.CENTER);
+		*/
 		
+		//Boilerplate for SubjectView
+		/*Subject model = ForaDataSource.getInstance().getSubjects().get(0);		
+		SubjectView view = new SubjectView(model);
+		SubjectController controller = new SubjectController(view, model);
+		view.setController(controller);
+		frame.getContentPane().add(view, BorderLayout.CENTER);*/
+		
+		Subject subject = ForaDataSource.getInstance().getSubjects().get(0);
+		//Boilerplate for SubjectView
+		
+		SubjectView subjectView = new SubjectView(subject);
+		SubjectController subjectController = new SubjectController(subjectView, subject);
+		subjectView.setController(subjectController);
+		
+		CreateCommentModel createCommentModel = new CreateCommentModel();
+		createCommentModel.setSubject(subject);
+		CreateCommentView createCommentView = new CreateCommentView(createCommentModel);
+		
+		CreateCommentController createCommentController = new CreateCommentController(createCommentView, createCommentModel,subjectController);
+		createCommentView.setController(createCommentController );
+
 		frame.getContentPane().add(subjectView, BorderLayout.CENTER);
+		frame.getContentPane().add(createCommentView, BorderLayout.SOUTH);
+
 	}
 
 }
